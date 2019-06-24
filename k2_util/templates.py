@@ -1,9 +1,5 @@
-from k2.settings import BASE_DIR, MAIN_DIR
 import os
 import logging
-from k2.jinja2 import environment
-from k2_app.models import Application
-from jinja2 import PackageLoader
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +26,7 @@ def _index_map(env, path, **kw):
         idx[name] = '{path}'.format(path=path)
     return idx
 
-def application_index(application: Application, **kw):
+def application_index(application, **kw):
     idx = {}
     idx['.'] = 'k2_app'
     for app_domain in application.application_domains.all():
@@ -39,10 +35,9 @@ def application_index(application: Application, **kw):
         )
     return idx
 
-def index(k2_domain, path, **kw):
-    jinja2_env = environment(loader=PackageLoader(k2_domain, 'jinja2'))
+def index(jinja2_env, base_dir, k2_domain, path, **kw):
 
-    search_path = '/'.join([BASE_DIR, k2_domain, 'jinja2', path])
+    search_path = '/'.join([base_dir, k2_domain, 'jinja2', path])
     if os.path.isdir(search_path):
         idx={}
         logger.debug('Indexing directory: {path}'.format(path=path))
