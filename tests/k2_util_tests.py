@@ -52,6 +52,16 @@ class K2UtilTests(TestCase):
         self.assertEqual('Hello 1234 World', k2_util.to_title_case('hello 1234 World!'))
         self.assertEqual('Hmm How About This', k2_util.to_title_case('  {Hmm how aBout @£$%^ this!@£$'))
         
+    def test_to_plural(self):
+        self.assertIsNone(k2_util.to_plural(None))
+        self.assertEqual('', k2_util.to_plural(''))
+        self.assertEqual('foos', k2_util.to_plural('foo'))
+        self.assertEqual('cacti', k2_util.to_plural('cactus'))
+        self.assertEqual('leaves', k2_util.to_plural('leaf'))
+        self.assertEqual('1234', k2_util.to_plural('1234'))
+        self.assertEqual('tries', k2_util.to_plural('try'))
+        self.assertEqual('days', k2_util.to_plural('day'))
+        
 if __name__ == '__main__':
     unittest.main()
 

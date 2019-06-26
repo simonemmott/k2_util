@@ -55,4 +55,25 @@ def to_title_case(s):
         return s
     return to_snake_case(s, separator=' ').title()
 
+def to_plural(s):
+    if not su.is_string(s):
+        return s
+    if not su.is_full_string(s):
+        return s
+    if s[-1:] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
+        return s
+    if s[-1:] == 'f':
+        return s[:-1]+'ves'
+    if s[-2:] == 'us':
+        return s[:-2]+'i'
+    if s[-2:] == 'ay':
+        return s+'s'
+    if s[-1:] in ['y', 'i']:
+        return s[:-1]+'ies'
+    if s[-1:] == 's':
+        return s+'es'
+
+    return s+'s'
+    
+
     
