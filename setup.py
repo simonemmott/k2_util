@@ -13,7 +13,6 @@ setup(
     packages=['k2_util', 'tests'],
     long_description=read('README.md'),
     install_requires=[
-        'python-string-utils',
-        'inflect'
+        'python-string-utils'
     ],
 )
