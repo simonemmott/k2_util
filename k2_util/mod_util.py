@@ -2,6 +2,10 @@ import logging
 import importlib
 from inspect import signature, Parameter
 from _collections import OrderedDict
+from os import listdir
+from os.path import basename, isdir, isfile, exists, dirname
+import pkgutil
+
 
 logger = logging.getLogger(__name__)
 info = logger.info
@@ -13,20 +17,46 @@ class MemberNotFound(Exception):
 class MemberNotUnique(Exception):
     pass
 
+class ModName(object):
+    def __init__(self, name):
+        self.name = name
+        
+    def to_dict(self):
+        return self.name
+
+    def __str__(self):
+        return (self.name)
+    
+    def __repr__(self):
+        return (self.name)
+    
 class Mod(object):
     
     name = ''
     description = ''
     file = ''
     members = []
+    modules = []
     
-    def __init__(self, *args, **kw):
-        self.name = kw.get('name', Mod.name)
-        self.description = kw.get('description', Mod.description)
-        self.file = kw.get('file', Mod.file)
+    def __init__(self, module, **kw):
+        
+        self.name = module.__name__
+        self.description = module.__doc__
+        self.file = module.__file__
         self.members = kw.get('members', [])
         for member in self.members:
             setattr(member, 'module', self)
+        self.modules = []
+        if hasattr(module, '__path__'):
+            for _, modname, _ in pkgutil.iter_modules(module.__path__):
+                if modname[0] != '_':
+                    if kw.get('recurse', False):
+                        sub_mod = importlib.import_module('.'.join([self.name, modname]))
+                        self.modules.append(Mod(sub_mod, **kw))
+                    else:
+                        self.modules.append(ModName(modname))
+        
+            
         
     def add_member(self, member):
         setattr(member, 'module', self)
@@ -102,7 +132,8 @@ class Mod(object):
             'name': self.name,
             'description': self.description,
             'file': self.file,
-            'members': [m.to_dict() for m in self.members]
+            'members': [m.to_dict() for m in self.members],
+            'modules': [m.to_dict() for m in self.modules]
             }
     
 
@@ -293,14 +324,9 @@ def _member_to_description(member):
         
 
 
-def scan(module):
+def scan(module, **kw):
     debug('Scanning module {mod}'.format(mod=module.__name__))
-    mod = Mod(
-        name=module.__name__,
-        description=module.__doc__,
-        file=module.__file__,
-        package=module.__package__
-        )
+    mod = Mod(module, **kw)
     for member_name in dir(module):
         debug('Found member {mod}.{member}'.format(mod=mod.name, member=member_name))
         if member_name[0] == '_':
