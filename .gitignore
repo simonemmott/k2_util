@@ -3,4 +3,4 @@
 /k2_util.egg-info/
 /.project
 /.pydevproject
-*/__pycache__
+**/__pycache__
