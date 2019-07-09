@@ -62,6 +62,30 @@ class K2UtilTests(TestCase):
         self.assertEqual('tries', k2_util.to_plural('try'))
         self.assertEqual('days', k2_util.to_plural('day'))
         
+    def test_filter_dict(self):
+        d1={
+            'a': 'A',
+            'b': 'B',
+            'c': 'C'
+        }
+        test = k2_util.filter_dict(d1, ['a', 'b'])
+        self.assertEqual(2, len(test))
+        self.assertTrue('a' in test)
+        self.assertTrue('b' in test)
+        self.assertTrue('c' not in test)
+        
+    def test_strip_dict(self):
+        d1={
+            'a': 'A',
+            'b': 'B',
+            'c': 'C'
+        }
+        test = k2_util.strip_dict(d1, ['a', 'b'])
+        self.assertEqual(1, len(test))
+        self.assertTrue('a' not in test)
+        self.assertTrue('b' not in test)
+        self.assertTrue('c' in test)
+        
 if __name__ == '__main__':
     unittest.main()
 

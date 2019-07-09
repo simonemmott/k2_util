@@ -75,5 +75,18 @@ def to_plural(s):
 
     return s+'s'
     
+def filter_dict(dict, fields):
+    data = {}
+    for field in fields:
+        if field in dict:
+            data[field] = dict.get(field)
+    return data
+
+def strip_dict(dict, fields):
+    data = {}
+    for field, value in dict.items():
+        if field not in fields:
+            data[field] = value
+    return data
 
     
